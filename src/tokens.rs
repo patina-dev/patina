@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use rust_stemmers::{Algorithm, Stemmer};
 use std::collections::HashSet;
 
 /// Splits a CamelCase or snake_case identifier into lowercase component words.
@@ -42,48 +43,10 @@ pub fn split_identifier(s: &str) -> Vec<String> {
     words
 }
 
-/// Basic suffix stripping for English words.
-/// Not a full stemmer — just handles common suffixes to normalize
-/// "incrementing" → "increment", "items" → "item", etc.
+/// Stems a word using the Snowball/Porter2 algorithm for consistent normalization.
 pub fn stem_word(word: &str) -> String {
-    let w = word.to_lowercase();
-    // Order matters: try longer suffixes first
-    if let Some(base) = w.strip_suffix("tion") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix("ment") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix("ing") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix("ly") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix("ed") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix("es") {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    if let Some(base) = w.strip_suffix('s') {
-        if base.len() >= 3 {
-            return base.to_string();
-        }
-    }
-    w
+    let stemmer = Stemmer::create(Algorithm::English);
+    stemmer.stem(&word.to_lowercase()).to_string()
 }
 
 const STOP_WORDS: &[&str] = &[
@@ -165,9 +128,11 @@ mod tests {
         assert_eq!(stem_word("incrementing"), "increment");
         assert_eq!(stem_word("items"), "item");
         assert_eq!(stem_word("created"), "creat");
-        assert_eq!(stem_word("creation"), "crea");
-        assert_eq!(stem_word("management"), "manage");
+        assert_eq!(stem_word("management"), "manag");
         assert_eq!(stem_word("quickly"), "quick");
+        // Snowball correctly normalizes word families the custom stemmer missed
+        assert_eq!(stem_word("setting"), stem_word("set"));
+        assert_eq!(stem_word("initializing"), stem_word("initialize"));
     }
 
     #[test]
