@@ -151,10 +151,21 @@ impl RedundantComment {
     }
 
     fn find_adjacent_code(comment_node: tree_sitter::Node) -> Option<tree_sitter::Node> {
-        // Try next named sibling first
-        let mut sibling = comment_node.next_named_sibling();
+        // Check previous sibling first for inline/trailing comments
+        // (comment on the same line as code it annotates)
+        let mut sibling = comment_node.prev_named_sibling();
+        while let Some(s) = sibling {
+            if s.kind() != "comment" {
+                if s.end_position().row == comment_node.start_position().row {
+                    return Some(s);
+                }
+                break;
+            }
+            sibling = s.prev_named_sibling();
+        }
 
-        // Skip over other comment nodes to find actual code
+        // Otherwise, try next named sibling (comment above code)
+        let mut sibling = comment_node.next_named_sibling();
         while let Some(s) = sibling {
             if s.kind() != "comment" {
                 return Some(s);

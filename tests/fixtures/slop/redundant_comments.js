@@ -46,3 +46,9 @@ initializeApplicationConfig();
 // expect: slop-001
 // Update the user profile data
 updateUserProfileData(data);
+
+// expect: slop-001
+const config = getApplicationConfig(); // Get the application config
+
+// This should NOT trigger — trailing comment adds context beyond code
+const timeout = 30000; // Maximum wait time before circuit breaker trips
