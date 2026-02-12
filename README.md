@@ -8,7 +8,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 **Static analysis for the patterns that accumulate when AI generates faster than humans review.**
 
-[![REUSE compliant](https://api.reuse.software/badge/github.com/patina-dev/patina)](https://api.reuse.software/info/github.com/patina-dev/patina)
+[![REUSE status](https://api.reuse.software/badge/github.com/patina-dev/patina)](https://api.reuse.software/info/github.com/patina-dev/patina)
 
 ---
 
