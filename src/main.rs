@@ -15,6 +15,7 @@ use clap::Parser;
 use cli::{Cli, Command, OutputFormat};
 use engine::RuleEngine;
 use reporters::Reporter;
+use std::collections::HashMap;
 use std::process;
 
 fn main() {
@@ -32,6 +33,7 @@ fn main() {
 
             // Analyze each file
             let mut all_findings = Vec::new();
+            let mut sources = HashMap::new();
             for file_path in &files {
                 let source = match std::fs::read(file_path) {
                     Ok(s) => s,
@@ -61,6 +63,7 @@ fn main() {
 
                 let findings = engine.analyze(&source, &tree, file_path);
                 all_findings.extend(findings);
+                sources.insert(file_path.clone(), source);
             }
 
             // Report findings
@@ -69,7 +72,7 @@ fn main() {
                 OutputFormat::Json => Box::new(reporters::json::JsonReporter),
             };
 
-            if let Err(e) = reporter.report(&all_findings) {
+            if let Err(e) = reporter.report(&all_findings, &sources) {
                 eprintln!("Error reporting findings: {e}");
                 process::exit(2);
             }
