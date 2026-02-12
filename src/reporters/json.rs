@@ -4,11 +4,13 @@
 
 use crate::reporters::Reporter;
 use crate::types::Finding;
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 pub struct JsonReporter;
 
 impl Reporter for JsonReporter {
-    fn report(&self, findings: &[Finding]) -> Result<(), Box<dyn std::error::Error>> {
+    fn report(&self, findings: &[Finding], _sources: &HashMap<PathBuf, Vec<u8>>) -> Result<(), Box<dyn std::error::Error>> {
         let json = serde_json::to_string_pretty(findings)?;
         println!("{json}");
         Ok(())
