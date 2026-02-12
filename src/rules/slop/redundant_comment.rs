@@ -63,11 +63,10 @@ impl RedundantComment {
         loop {
             let node = cursor.node();
 
-            if node.kind() == "comment" {
-                if let Some(finding) = Self::check_comment(node, source, file_path) {
+            if node.kind() == "comment"
+                && let Some(finding) = Self::check_comment(node, source, file_path) {
                     findings.push(finding);
                 }
-            }
 
             if cursor.goto_first_child() {
                 continue;
@@ -184,11 +183,10 @@ impl RedundantComment {
         let mut cursor = node.walk();
         loop {
             let kind = cursor.node().kind();
-            if kind == "identifier" || kind == "property_identifier" || kind == "shorthand_property_identifier" || kind == "shorthand_property_identifier_pattern" {
-                if let Ok(text) = cursor.node().utf8_text(source.as_bytes()) {
+            if (kind == "identifier" || kind == "property_identifier" || kind == "shorthand_property_identifier" || kind == "shorthand_property_identifier_pattern")
+                && let Ok(text) = cursor.node().utf8_text(source.as_bytes()) {
                     identifiers.push(text.to_string());
                 }
-            }
 
             if cursor.goto_first_child() {
                 continue;

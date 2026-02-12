@@ -6,13 +6,14 @@ use crate::rules::Rule;
 use crate::types::Finding;
 use std::path::Path;
 
+#[derive(Default)]
 pub struct RuleEngine {
     rules: Vec<Box<dyn Rule>>,
 }
 
 impl RuleEngine {
     pub fn new() -> Self {
-        Self { rules: Vec::new() }
+        Self::default()
     }
 
     pub fn register(&mut self, rule: Box<dyn Rule>) {
