@@ -85,21 +85,18 @@ fn scanning_nonexistent_path_still_runs() {
     assert!(output.status.success());
 }
 
-#[test]
-fn expect_annotations_match_findings() {
-    // Parse the fixture file for // expect: slop-001 annotations
-    let fixture_path = "tests/fixtures/slop/redundant_comments.js";
+fn check_expect_annotations(fixture_path: &str) {
     let source = std::fs::read_to_string(fixture_path).expect("fixture should exist");
 
     let mut expected_lines: Vec<usize> = Vec::new();
     for (i, line) in source.lines().enumerate() {
-        if line.trim() == "// expect: slop-001" {
+        let trimmed = line.trim();
+        if trimmed.starts_with("// expect: slop-") {
             // The finding should be on the NEXT line (the actual comment)
             expected_lines.push(i + 2); // +1 for 0-index, +1 for next line
         }
     }
 
-    // Run patina and get actual finding lines
     let output = patina_bin()
         .args(["scan", fixture_path, "--format", "json"])
         .output()
@@ -116,8 +113,18 @@ fn expect_annotations_match_findings() {
 
     assert_eq!(
         actual_lines, expected_lines,
-        "findings should match // expect: annotations\nExpected: {expected_lines:?}\nActual: {actual_lines:?}"
+        "{fixture_path}: findings should match // expect: annotations\nExpected: {expected_lines:?}\nActual: {actual_lines:?}"
     );
+}
+
+#[test]
+fn expect_annotations_match_findings_redundant_comments() {
+    check_expect_annotations("tests/fixtures/slop/redundant_comments.js");
+}
+
+#[test]
+fn expect_annotations_match_findings_reasoning_artifacts() {
+    check_expect_annotations("tests/fixtures/slop/reasoning_artifacts.js");
 }
 
 #[test]
