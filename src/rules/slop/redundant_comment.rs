@@ -28,9 +28,6 @@ impl Rule for RedundantComment {
     fn name(&self) -> &'static str {
         "Redundant Comment"
     }
-    fn description(&self) -> &'static str {
-        "Comment restates the adjacent code without adding meaningful context"
-    }
     fn severity(&self) -> Severity {
         Severity::Warn
     }
@@ -131,8 +128,8 @@ impl RedundantComment {
         if overlap >= OVERLAP_THRESHOLD {
             let start = node.start_position();
             Some(Finding {
-                rule_id: "slop-001",
-                message: "Redundant Comment: comment restates the adjacent code".to_string(),
+                rule_id: "",
+                message: "comment restates the adjacent code".to_string(),
                 severity: Severity::Warn,
                 file: file_path.to_path_buf(),
                 line: start.row + 1,

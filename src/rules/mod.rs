@@ -10,7 +10,6 @@ use std::path::Path;
 pub trait Rule: Send + Sync {
     fn id(&self) -> &'static str;
     fn name(&self) -> &'static str;
-    fn description(&self) -> &'static str;
     fn severity(&self) -> Severity;
     fn check(&self, source: &[u8], tree: &tree_sitter::Tree, file_path: &Path) -> Vec<Finding>;
 }

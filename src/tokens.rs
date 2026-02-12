@@ -90,10 +90,6 @@ const STOP_WORDS: &[&str] = &[
     "the", "a", "an", "this", "that", "to", "of", "in", "for", "is", "it", "be", "as", "with",
 ];
 
-pub fn is_stop_word(word: &str) -> bool {
-    STOP_WORDS.contains(&word.to_lowercase().as_str())
-}
-
 /// Strip comment markers and extract meaningful tokens from comment text.
 /// Removes `//`, `/*`, `*/`, `*` line prefixes, stop words; stems and lowercases.
 pub fn extract_comment_tokens(comment_text: &str) -> Vec<String> {
@@ -178,13 +174,6 @@ mod tests {
     fn test_stem_short_words_unchanged() {
         assert_eq!(stem_word("is"), "is");
         assert_eq!(stem_word("as"), "as");
-    }
-
-    #[test]
-    fn test_is_stop_word() {
-        assert!(is_stop_word("the"));
-        assert!(is_stop_word("The"));
-        assert!(!is_stop_word("counter"));
     }
 
     #[test]
