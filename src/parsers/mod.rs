@@ -4,6 +4,6 @@
 
 pub mod javascript;
 
-pub trait LanguageParser: Send + Sync {
+pub trait LanguageParser {
     fn parse(&self, source: &[u8]) -> Result<tree_sitter::Tree, String>;
 }
