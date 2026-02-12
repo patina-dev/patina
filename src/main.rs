@@ -34,6 +34,7 @@ fn main() {
             // Analyze each file
             let mut all_findings = Vec::new();
             let mut sources = HashMap::new();
+            let mut parser_cache: HashMap<String, Box<dyn parsers::LanguageParser>> = HashMap::new();
             for file_path in &files {
                 let source = match std::fs::read(file_path) {
                     Ok(s) => s,
@@ -48,10 +49,17 @@ fn main() {
                     None => continue,
                 };
 
-                let parser = match parsers::javascript::parser_for_extension(ext) {
-                    Some(p) => p,
-                    None => continue,
-                };
+                if !parser_cache.contains_key(ext) {
+                    match parsers::javascript::parser_for_extension(ext) {
+                        Some(Ok(p)) => { parser_cache.insert(ext.to_string(), p); }
+                        Some(Err(e)) => {
+                            eprintln!("Error initializing parser for .{ext}: {e}");
+                            continue;
+                        }
+                        None => continue,
+                    }
+                }
+                let parser = &parser_cache[ext];
 
                 let tree = match parser.parse(&source) {
                     Ok(t) => t,
