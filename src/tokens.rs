@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 use std::collections::HashSet;
 
 /// Splits a CamelCase or snake_case identifier into lowercase component words.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # Patina
 
 **A static analysis engine for the patterns that accumulate when AI generates faster than humans review.**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # Contributing to Patina
 
 Thank you for your interest in contributing to Patina. Whether you're fixing a bug, proposing a new rule, improving documentation, or reporting false positives — your input makes this tool better for everyone.

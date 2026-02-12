@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 use serde::Serialize;
 use std::ops::Range;
 use std::path::PathBuf;

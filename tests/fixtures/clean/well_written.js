@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 // Normalize Unicode before comparison to handle locale-specific equivalence
 user.setName(normalizeName(name));
 

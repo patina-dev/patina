@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 use std::path::Path;
 use std::process::Command;
 
@@ -28,7 +32,7 @@ fn slop_001_detects_redundant_comments() {
 
     // Verify specific line numbers
     let lines: Vec<u64> = findings.iter().map(|f| f["line"].as_u64().unwrap()).collect();
-    assert_eq!(lines, vec![2, 6, 10, 39, 43]);
+    assert_eq!(lines, vec![6, 10, 14, 43, 47]);
 }
 
 #[test]

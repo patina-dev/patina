@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Steven Mosley <astrosteveo>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 use crate::rules::Rule;
 use crate::tokens::{extract_code_tokens, extract_comment_tokens};
 use crate::types::{Finding, Severity};
