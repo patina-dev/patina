@@ -66,14 +66,19 @@ impl RedundantComment {
                 }
             }
 
-            // Recurse into children
             if cursor.goto_first_child() {
-                Self::walk_tree(cursor, source, file_path, findings);
-                cursor.goto_parent();
+                continue;
             }
-
-            if !cursor.goto_next_sibling() {
-                break;
+            if cursor.goto_next_sibling() {
+                continue;
+            }
+            loop {
+                if !cursor.goto_parent() {
+                    return;
+                }
+                if cursor.goto_next_sibling() {
+                    break;
+                }
             }
         }
     }
@@ -162,27 +167,26 @@ impl RedundantComment {
 
     fn collect_identifiers(node: tree_sitter::Node, source: &str) -> Vec<String> {
         let mut identifiers = Vec::new();
-        Self::collect_identifiers_recursive(node, source, &mut identifiers);
-        identifiers
-    }
-
-    fn collect_identifiers_recursive(
-        node: tree_sitter::Node,
-        source: &str,
-        identifiers: &mut Vec<String>,
-    ) {
-        let kind = node.kind();
-        if kind == "identifier" || kind == "property_identifier" || kind == "shorthand_property_identifier" || kind == "shorthand_property_identifier_pattern" {
-            if let Ok(text) = node.utf8_text(source.as_bytes()) {
-                identifiers.push(text.to_string());
-            }
-        }
-
         let mut cursor = node.walk();
-        if cursor.goto_first_child() {
+        loop {
+            let kind = cursor.node().kind();
+            if kind == "identifier" || kind == "property_identifier" || kind == "shorthand_property_identifier" || kind == "shorthand_property_identifier_pattern" {
+                if let Ok(text) = cursor.node().utf8_text(source.as_bytes()) {
+                    identifiers.push(text.to_string());
+                }
+            }
+
+            if cursor.goto_first_child() {
+                continue;
+            }
+            if cursor.goto_next_sibling() {
+                continue;
+            }
             loop {
-                Self::collect_identifiers_recursive(cursor.node(), source, identifiers);
-                if !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    return identifiers;
+                }
+                if cursor.goto_next_sibling() {
                     break;
                 }
             }
