@@ -50,38 +50,30 @@ Comments that restate the adjacent code without adding meaningful context. These
 // Set the user's name
 user.setName(name);
 // Comment tokens: [set, user, name]
-// Code tokens:    [user, set, name, name]
+// Code tokens:    [user, set, name]
 // Overlap: 3/3 = 1.0 → FLAGGED
 
+// Get the user name
+const userName = getUserName();
+// Comment tokens: [get, user, name]
+// Code tokens:    [user, name, get] (from userName + getUserName)
+// Overlap: 3/3 = 1.0 → FLAGGED
+```
+
+### Borderline (not flagged)
+
+```javascript
 // Increment the counter
 counter++;
-// Comment tokens: [increment, counter]  (after stemming "increment")
-// Code tokens:    [counter]
-// Overlap: 1/2 = 0.5 → NOT flagged (but close — "increment" doesn't appear in code)
+// Comment tokens: [increment, counter]
+// Code tokens:    [counter] (counter++ has only the identifier "counter")
+// Overlap: 1/2 = 0.5 → NOT flagged
 
 // Loop through the items
 for (const item of items) {
 // Comment tokens: [loop, through, item]
-// Code tokens:    [item, items]  (after stemming "items" → "item")
+// Code tokens:    [item] (after stemming "items" → "item")
 // Overlap: 1/3 = 0.33 → NOT flagged
-```
-
-Wait — "increment" requires special handling. Let's be precise:
-
-```javascript
-// Increment the counter
-counter++;
-// "Increment" stems to "increment", "counter" stays "counter"
-// Code tokens from `counter++`: identifier "counter" → [counter]
-// Overlap: 1/2 = 0.5 → NOT flagged
-```
-
-```javascript
-// Get the user name
-const userName = getUserName();
-// Comment tokens: [get, user, name]
-// Code tokens from identifiers: userName → [user, name], getUserName → [get, user, name]
-// Overlap: 3/3 = 1.0 → FLAGGED
 ```
 
 ### Not Flagged
