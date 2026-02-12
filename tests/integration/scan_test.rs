@@ -22,7 +22,7 @@ fn slop_001_detects_redundant_comments() {
     let findings: Vec<serde_json::Value> = serde_json::from_str(&stdout)
         .expect("output should be valid JSON");
 
-    assert_eq!(findings.len(), 5, "expected 5 findings, got {}", findings.len());
+    assert_eq!(findings.len(), 6, "expected 6 findings, got {}", findings.len());
 
     // All findings should be slop-001
     for finding in &findings {
@@ -32,7 +32,7 @@ fn slop_001_detects_redundant_comments() {
 
     // Verify specific line numbers
     let lines: Vec<u64> = findings.iter().map(|f| f["line"].as_u64().unwrap()).collect();
-    assert_eq!(lines, vec![6, 10, 14, 43, 47]);
+    assert_eq!(lines, vec![6, 10, 14, 43, 47, 51]);
 }
 
 #[test]
