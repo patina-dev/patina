@@ -15,5 +15,8 @@ pub trait Rule: Send + Sync {
 }
 
 pub fn all_rules() -> Vec<Box<dyn Rule>> {
-    vec![Box::new(slop::redundant_comment::RedundantComment)]
+    vec![
+        Box::new(slop::redundant_comment::RedundantComment),
+        Box::new(slop::reasoning_artifact::ReasoningArtifact),
+    ]
 }
