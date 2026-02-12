@@ -28,7 +28,15 @@ impl RuleEngine {
         let mut findings: Vec<Finding> = self
             .rules
             .iter()
-            .flat_map(|rule| rule.check(source, tree, file_path))
+            .flat_map(|rule| {
+                let mut rule_findings = rule.check(source, tree, file_path);
+                for finding in &mut rule_findings {
+                    finding.rule_id = rule.id();
+                    finding.severity = rule.severity();
+                    finding.message = format!("{}: {}", rule.name(), finding.message);
+                }
+                rule_findings
+            })
             .collect();
         findings.sort_by(|a, b| a.line.cmp(&b.line).then(a.column.cmp(&b.column)));
         findings

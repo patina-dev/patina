@@ -10,12 +10,6 @@ pub struct TsParser;
 pub struct TsxParser;
 
 impl LanguageParser for JsParser {
-    fn language_id(&self) -> &str {
-        "javascript"
-    }
-    fn file_extensions(&self) -> &[&str] {
-        &["js", "jsx"]
-    }
     fn parse(&self, source: &[u8]) -> Result<tree_sitter::Tree, String> {
         let mut parser = Parser::new();
         parser
@@ -28,12 +22,6 @@ impl LanguageParser for JsParser {
 }
 
 impl LanguageParser for TsParser {
-    fn language_id(&self) -> &str {
-        "typescript"
-    }
-    fn file_extensions(&self) -> &[&str] {
-        &["ts"]
-    }
     fn parse(&self, source: &[u8]) -> Result<tree_sitter::Tree, String> {
         let mut parser = Parser::new();
         parser
@@ -46,12 +34,6 @@ impl LanguageParser for TsParser {
 }
 
 impl LanguageParser for TsxParser {
-    fn language_id(&self) -> &str {
-        "tsx"
-    }
-    fn file_extensions(&self) -> &[&str] {
-        &["tsx"]
-    }
     fn parse(&self, source: &[u8]) -> Result<tree_sitter::Tree, String> {
         let mut parser = Parser::new();
         parser
