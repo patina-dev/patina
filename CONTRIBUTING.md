@@ -42,10 +42,10 @@ Tuning heuristics requires real-world examples. Yours matter.
 
 1. Check the [open issues](https://github.com/patina-dev/patina/issues) for something that interests you
 2. Comment on the issue to let others know you're working on it
-3. Create a branch from `main` (e.g., `fix/issue-number-short-description`)
+3. Create a branch from `main` following the naming convention below
 4. Make your changes
 5. Make sure `cargo test` passes and `cargo clippy` is clean
-6. Open a pull request
+6. Open a pull request following the PR conventions below
 
 ### Propose a New Rule
 
@@ -78,7 +78,39 @@ Clear documentation is part of the project's mission. If something is confusing,
 - **Test with fixtures.** Every rule should have corresponding test fixtures in `tests/fixtures/` with `// expect: <rule-id>` annotations.
 - **No network calls, no models, no telemetry.** Patina is deterministic and local. Always.
 
-## Pull Request Process
+## Branch Naming
+
+Use the format `<type>/<issue>-<short-description>`:
+
+- `fix/11-clean-up-dead-code-warnings`
+- `feat/14-add-bloat-category-rules`
+- `docs/13-add-pr-conventions`
+
+Common types: `fix`, `feat`, `docs`, `refactor`, `test`.
+
+## Pull Request Conventions
+
+### Title
+
+- Use imperative mood (e.g., "Add ...", "Fix ...", "Remove ...")
+- Keep it under 70 characters
+- Do not include the issue number in the title
+
+### Description
+
+Use this template for the PR body:
+
+```markdown
+Closes #<issue-number>
+
+## Summary
+<1-3 bullet points describing what changed and why>
+
+## Test plan
+- [ ] <how you verified the changes work>
+```
+
+### General
 
 1. Keep PRs focused — one logical change per PR
 2. Include tests for new functionality
