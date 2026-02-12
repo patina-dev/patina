@@ -15,7 +15,18 @@ impl RuleEngine {
         self.rules.push(rule);
     }
 
-    pub fn analyze(&self, _source: &[u8], _tree: &tree_sitter::Tree, _file_path: &Path) -> Vec<Finding> {
-        Vec::new()
+    pub fn analyze(
+        &self,
+        source: &[u8],
+        tree: &tree_sitter::Tree,
+        file_path: &Path,
+    ) -> Vec<Finding> {
+        let mut findings: Vec<Finding> = self
+            .rules
+            .iter()
+            .flat_map(|rule| rule.check(source, tree, file_path))
+            .collect();
+        findings.sort_by(|a, b| a.line.cmp(&b.line).then(a.column.cmp(&b.column)));
+        findings
     }
 }
