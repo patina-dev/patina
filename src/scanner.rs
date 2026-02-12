@@ -20,7 +20,10 @@ pub fn scan_files(path: &Path) -> Vec<PathBuf> {
     for entry in WalkBuilder::new(path).build() {
         let entry = match entry {
             Ok(e) => e,
-            Err(_) => continue,
+            Err(e) => {
+                eprintln!("Warning: {e}");
+                continue;
+            }
         };
         let path = entry.path();
         if path.is_file() && has_supported_extension(path) {
