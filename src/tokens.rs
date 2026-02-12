@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use rust_stemmers::{Algorithm, Stemmer};
-use std::collections::HashSet;
+use std::collections::BTreeSet;
 
 /// Splits a CamelCase or snake_case identifier into lowercase component words.
 ///
@@ -63,8 +63,6 @@ pub fn extract_comment_tokens(comment_text: &str) -> Vec<String> {
         .unwrap_or(comment_text.trim());
     let cleaned = cleaned.strip_suffix("*/").unwrap_or(cleaned);
 
-    let stop: HashSet<&str> = STOP_WORDS.iter().copied().collect();
-
     cleaned
         .lines()
         .flat_map(|line| {
@@ -74,7 +72,7 @@ pub fn extract_comment_tokens(comment_text: &str) -> Vec<String> {
         .map(|w| w.trim_matches(|c: char| !c.is_alphanumeric()))
         .filter(|w| !w.is_empty() && w.len() > 1)
         .map(|w| w.to_lowercase())
-        .filter(|w| !stop.contains(w.as_str()))
+        .filter(|w| !STOP_WORDS.contains(&w.as_str()))
         .map(|w| stem_word(&w))
         .collect()
 }
@@ -82,7 +80,7 @@ pub fn extract_comment_tokens(comment_text: &str) -> Vec<String> {
 /// Extract tokens from code identifiers.
 /// Splits each identifier by CamelCase/snake_case, stems, and lowercases.
 pub fn extract_code_tokens(identifiers: &[&str]) -> Vec<String> {
-    let mut tokens: HashSet<String> = HashSet::new();
+    let mut tokens: BTreeSet<String> = BTreeSet::new();
     for ident in identifiers {
         for word in split_identifier(ident) {
             tokens.insert(stem_word(&word));
