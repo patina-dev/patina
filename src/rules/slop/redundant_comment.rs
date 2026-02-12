@@ -41,7 +41,10 @@ impl Rule for RedundantComment {
         let mut findings = Vec::new();
         let source_str = match std::str::from_utf8(source) {
             Ok(s) => s,
-            Err(_) => return findings,
+            Err(_) => {
+                eprintln!("Warning: {} is not valid UTF-8, skipping", file_path.display());
+                return findings;
+            }
         };
 
         let mut cursor = tree.walk();
