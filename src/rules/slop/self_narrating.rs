@@ -6,41 +6,36 @@ use crate::rules::Rule;
 use crate::types::{Finding, Severity};
 use std::path::Path;
 
-/// Multi-word patterns that indicate AI reasoning traces in comments.
-/// Each pattern is matched case-insensitively at the start of a line within the comment.
-const REASONING_PATTERNS: &[&str] = &[
-    "wait —",
-    "wait -",
-    "wait,",
-    "actually,",
-    "actually —",
-    "actually -",
-    "hmm,",
-    "hmm.",
-    "let me think",
-    "let me reconsider",
-    "let's be precise",
-    "let's try",
-    "on second thought",
-    "i think we should",
-    "i believe this",
-    "i'm not sure",
-    "that doesn't work",
-    "let me re-read",
-    "let me re-examine",
+/// Phrase-start patterns that indicate self-narrating/explanatory comments.
+/// Matched case-insensitively at the start of a line within the comment.
+const NARRATING_PATTERNS: &[&str] = &[
+    "here we",
+    "we need to",
+    "we should",
+    "we have to",
+    "let's make sure",
+    "let's ensure",
+    "this is where we",
+    "this handles",
+    "this is necessary",
+    "this function",
+    "this method",
+    "this block",
+    "the following code",
+    "below we",
 ];
 
-pub struct ReasoningArtifact;
+pub struct SelfNarrating;
 
-impl Rule for ReasoningArtifact {
+impl Rule for SelfNarrating {
     fn id(&self) -> &'static str {
-        "slop-002"
+        "slop-005"
     }
     fn name(&self) -> &'static str {
-        "Reasoning Artifact"
+        "Self-Narrating Comment"
     }
     fn description(&self) -> &'static str {
-        "Detects AI reasoning traces (chain-of-thought artifacts) left in comments"
+        "Detects comments that narrate or describe code in first person instead of explaining why"
     }
     fn severity(&self) -> Severity {
         Severity::Warn
@@ -64,7 +59,7 @@ impl Rule for ReasoningArtifact {
     }
 }
 
-impl ReasoningArtifact {
+impl SelfNarrating {
     fn walk_tree(
         cursor: &mut tree_sitter::TreeCursor,
         source: &str,
@@ -75,9 +70,10 @@ impl ReasoningArtifact {
             let node = cursor.node();
 
             if node.kind() == "comment"
-                && let Some(finding) = Self::check_comment(node, source, file_path) {
-                    findings.push(finding);
-                }
+                && let Some(finding) = Self::check_comment(node, source, file_path)
+            {
+                findings.push(finding);
+            }
 
             if cursor.goto_first_child() {
                 continue;
@@ -103,6 +99,11 @@ impl ReasoningArtifact {
     ) -> Option<Finding> {
         let text = node.utf8_text(source.as_bytes()).ok()?;
 
+        // Skip JSDoc blocks
+        if text.starts_with("/**") {
+            return None;
+        }
+
         // Strip comment markers and check each line
         let cleaned = text
             .trim()
@@ -115,19 +116,19 @@ impl ReasoningArtifact {
             let line = line.trim().strip_prefix('*').unwrap_or(line.trim()).trim();
             let lower = line.to_lowercase();
 
-            for pattern in REASONING_PATTERNS {
+            for pattern in NARRATING_PATTERNS {
                 if lower.starts_with(pattern) {
                     let start = node.start_position();
                     return Some(Finding {
                         rule_id: "",
-                        message: "comment contains AI reasoning trace".to_string(),
+                        message: "comment uses self-narrating language".to_string(),
                         severity: Severity::Warn,
                         file: file_path.to_path_buf(),
                         line: start.row + 1,
                         column: start.column + 1,
                         span: node.byte_range(),
                         suggestion: Some(
-                            "Remove this comment — it appears to be an AI chain-of-thought artifact."
+                            "Rewrite to explain *why*, not narrate *what* — or remove if the code is self-explanatory."
                                 .to_string(),
                         ),
                     });

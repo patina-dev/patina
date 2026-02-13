@@ -28,6 +28,9 @@ impl Rule for RedundantComment {
     fn name(&self) -> &'static str {
         "Redundant Comment"
     }
+    fn description(&self) -> &'static str {
+        "Detects comments that merely restate the adjacent code without adding context"
+    }
     fn severity(&self) -> Severity {
         Severity::Warn
     }
