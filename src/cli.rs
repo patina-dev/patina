@@ -22,6 +22,17 @@ pub enum Command {
         /// Output format
         #[arg(long, default_value = "terminal")]
         format: OutputFormat,
+
+        /// Minimum severity to report (error, warn, info)
+        #[arg(long, default_value = "info")]
+        severity_threshold: SeverityThreshold,
+    },
+
+    /// List all available rules
+    Rules {
+        /// Output format
+        #[arg(long, default_value = "terminal")]
+        format: OutputFormat,
     },
 }
 
@@ -29,4 +40,11 @@ pub enum Command {
 pub enum OutputFormat {
     Terminal,
     Json,
+}
+
+#[derive(Clone, Copy, ValueEnum)]
+pub enum SeverityThreshold {
+    Error,
+    Warn,
+    Info,
 }
